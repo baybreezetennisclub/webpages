@@ -5,25 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BBTC Court Schedule</title>
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #f3f6f9;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --green: #22c55e;
+      --green-soft: #dcfce7;
+      --green-text: #166534;
+      --amber: #f59e0b;
+      --amber-soft: #fef3c7;
+      --amber-text: #92400e;
+      --red: #ef4444;
+      --red-soft: #fee2e2;
+      --red-text: #991b1b;
+      --primary: #14532d;
+      --primary-dark: #0f3d2e;
+      --border: #e5e7eb;
+      --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f6f9;
-      color: #1f2937;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .wrapper {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
     }
 
     .hero {
-      background: linear-gradient(135deg, #0f3d2e, #14532d);
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
       color: #fff;
       padding: 24px 20px;
       border-radius: 18px;
@@ -51,15 +69,15 @@
     }
 
     .info-card {
-      background: #fff;
+      background: var(--card);
       border-radius: 14px;
       padding: 16px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      box-shadow: var(--shadow);
     }
 
     .info-card .label {
       font-size: 12px;
-      color: #6b7280;
+      color: var(--muted);
       margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -81,7 +99,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #fff;
+      background: var(--card);
       padding: 10px 14px;
       border-radius: 999px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -95,17 +113,9 @@
       display: inline-block;
     }
 
-    .dot.available {
-      background: #22c55e;
-    }
-
-    .dot.booked {
-      background: #f59e0b;
-    }
-
-    .dot.blocked {
-      background: #ef4444;
-    }
+    .dot.available { background: var(--green); }
+    .dot.booked { background: var(--amber); }
+    .dot.blocked { background: var(--red); }
 
     .schedule-grid {
       display: grid;
@@ -114,23 +124,30 @@
     }
 
     .day-card {
-      background: #fff;
+      background: var(--card);
       border-radius: 18px;
       padding: 18px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      box-shadow: var(--shadow);
     }
 
     .day-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
       margin-bottom: 14px;
     }
 
-    .day-header h2 {
+    .day-title {
       margin: 0;
       font-size: 20px;
       color: #0f172a;
+    }
+
+    .day-date {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--muted);
     }
 
     .slot-count {
@@ -140,17 +157,37 @@
       padding: 6px 10px;
       border-radius: 999px;
       font-weight: bold;
+      white-space: nowrap;
     }
 
     .slot {
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--border);
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 12px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
 
-    .slot:last-child {
-      margin-bottom: 0;
+    .slot:last-child { margin-bottom: 0; }
+
+    .slot.available-slot {
+      cursor: pointer;
+    }
+
+    .slot.available-slot:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(20, 83, 45, 0.08);
+      border-color: #86efac;
+    }
+
+    .slot.booked-slot {
+      cursor: pointer;
+    }
+
+    .slot.booked-slot:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.08);
+      border-color: #fcd34d;
     }
 
     .slot-top {
@@ -176,18 +213,18 @@
     }
 
     .badge.available {
-      background: #dcfce7;
-      color: #166534;
+      background: var(--green-soft);
+      color: var(--green-text);
     }
 
     .badge.booked {
-      background: #fef3c7;
-      color: #92400e;
+      background: var(--amber-soft);
+      color: var(--amber-text);
     }
 
     .badge.blocked {
-      background: #fee2e2;
-      color: #991b1b;
+      background: var(--red-soft);
+      color: var(--red-text);
     }
 
     .reserved-for {
@@ -196,10 +233,16 @@
       line-height: 1.4;
     }
 
+    .helper-text {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     .footer-note {
       margin-top: 22px;
-      background: #fff;
-      border-left: 5px solid #14532d;
+      background: var(--card);
+      border-left: 5px solid var(--primary);
       border-radius: 12px;
       padding: 16px;
       font-size: 14px;
@@ -211,23 +254,123 @@
       color: #111827;
     }
 
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 20px 10px;
+    }
+
+    .modal-header h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .modal-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .modal-body {
+      padding: 0 20px 20px;
+    }
+
+    .slot-summary {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-top: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+    }
+
+    .pin-note {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-warning {
+      background: #b45309;
+      color: #fff;
+    }
+
     @media (max-width: 768px) {
-      .info-row {
-        grid-template-columns: 1fr;
-      }
-
-      .schedule-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero h1 {
-        font-size: 24px;
-      }
-
-      .slot-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      .info-row { grid-template-columns: 1fr; }
+      .schedule-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 24px; }
+      .slot-top { flex-direction: column; align-items: flex-start; }
+      .day-header { flex-direction: column; }
     }
   </style>
 </head>
@@ -237,7 +380,7 @@
       <h1>Bay Breeze Tennis Club</h1>
       <p>
         Public court training schedule for members, guests, and tennis enthusiasts.
-        Please check slot availability first before confirming any training session.
+        Afternoon court use is posted in one-hour slots from 1:00 PM to 6:00 PM.
       </p>
     </div>
 
@@ -248,11 +391,11 @@
       </div>
       <div class="info-card">
         <div class="label">Viewing Period</div>
-        <div class="value">Weekly Schedule</div>
+        <div class="value" id="viewingPeriod">Loading week...</div>
       </div>
       <div class="info-card">
-        <div class="label">Last Updated</div>
-        <div class="value">March 9, 2026</div>
+        <div class="label">Today</div>
+        <div class="value" id="todayLabel">Loading date...</div>
       </div>
     </div>
 
@@ -262,231 +405,360 @@
       <div class="legend-item"><span class="dot blocked"></span> Blocked / Not Available</div>
     </div>
 
-    <div class="schedule-grid">
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Monday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Coach Mark / Training Session</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Guest Training</div>
-        </div>
-      </div>
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Tuesday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Private Training</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-      </div>
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Wednesday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">BBTC Members</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Guest Training</div>
-        </div>
-      </div>
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Thursday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Coach Training</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge blocked">Blocked</div>
-          </div>
-          <div class="reserved-for">Court Maintenance</div>
-        </div>
-      </div>
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Friday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Guest Session</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Club Practice</div>
-        </div>
-      </div>
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Saturday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Morning Training</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Guest Group</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-      </div>
-
-      <div class="day-card">
-        <div class="day-header">
-          <h2>Sunday</h2>
-          <span class="slot-count">3 slots</span>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">6:00–8:00 AM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">8:00–10:00 AM</div>
-            <div class="badge booked">Booked</div>
-          </div>
-          <div class="reserved-for">Weekend Training</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-top">
-            <div class="time">4:00–6:00 PM</div>
-            <div class="badge available">Available</div>
-          </div>
-          <div class="reserved-for">Open for booking</div>
-        </div>
-      </div>
-
-    </div>
+    <div class="schedule-grid" id="scheduleGrid"></div>
 
     <div class="footer-note">
-      <strong>Reminder:</strong> Posted bookings are considered reserved. To request a slot,
-      please contact the court schedule admin first before confirming any training session.
+      <strong>Reminder:</strong> Posted bookings are considered reserved. For available slots,
+      click the card and enter the name of the person who will use the court.
     </div>
   </div>
+
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h3 id="modalTitle">Reserve Slot</h3>
+        <p id="modalSlotDetails">Choose a schedule slot.</p>
+      </div>
+      <div class="modal-body">
+        <div class="slot-summary" id="slotSummary"></div>
+
+        <form id="bookingForm">
+          <div class="form-group" id="bookingNameGroup">
+            <label for="bookingName">Name of person using the court</label>
+            <input type="text" id="bookingName" name="bookingName" placeholder="Enter full name" />
+          </div>
+
+          <div class="form-group" id="adminPinGroup" style="display:none;">
+            <label for="adminPin">Admin PIN</label>
+            <input type="password" id="adminPin" name="adminPin" inputmode="numeric" maxlength="4" placeholder="Enter 4-digit PIN" />
+            <div class="pin-note">Admin PIN is required to cancel a booked slot.</div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="closeModalBtn">Close</button>
+            <button type="submit" class="btn btn-primary" id="submitBookingBtn">Submit Booking</button>
+            <button type="button" class="btn btn-warning" id="confirmCancelBtn" style="display:none;">Cancel Booking</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'bbtcCourtScheduleState';
+    const STORAGE_WEEK_KEY = 'bbtcCourtScheduleWeekKey';
+    const ADMIN_PIN = '0309';
+    const MANILA_TIMEZONE = 'Asia/Manila';
+
+    const slotsPerDay = [
+      '1:00–2:00 PM',
+      '2:00–3:00 PM',
+      '3:00–4:00 PM',
+      '4:00–5:00 PM',
+      '5:00–6:00 PM'
+    ];
+
+    const defaultScheduleTemplate = [
+      { day: 'Monday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) },
+      { day: 'Tuesday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) },
+      { day: 'Wednesday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) },
+      { day: 'Thursday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) },
+      { day: 'Friday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) },
+      { day: 'Saturday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) },
+      { day: 'Sunday', slots: slotsPerDay.map(time => ({ time, status: 'available', reservedFor: 'Open for booking' })) }
+    ];
+
+    let scheduleState = [];
+    let selectedSlot = null;
+    let modalMode = 'book';
+    let activeWeekKey = '';
+
+    const scheduleGrid = document.getElementById('scheduleGrid');
+    const viewingPeriod = document.getElementById('viewingPeriod');
+    const todayLabel = document.getElementById('todayLabel');
+    const bookingModal = document.getElementById('bookingModal');
+    const bookingForm = document.getElementById('bookingForm');
+    const bookingNameInput = document.getElementById('bookingName');
+    const adminPinInput = document.getElementById('adminPin');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSlotDetails = document.getElementById('modalSlotDetails');
+    const slotSummary = document.getElementById('slotSummary');
+    const bookingNameGroup = document.getElementById('bookingNameGroup');
+    const adminPinGroup = document.getElementById('adminPinGroup');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const submitBookingBtn = document.getElementById('submitBookingBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+    function cloneScheduleTemplate() {
+      return JSON.parse(JSON.stringify(defaultScheduleTemplate));
+    }
+
+    function getTodayInManila() {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: MANILA_TIMEZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+
+      const parts = formatter.formatToParts(now);
+      const map = {};
+      for (const part of parts) {
+        if (part.type !== 'literal') {
+          map[part.type] = part.value;
+        }
+      }
+      return new Date(`${map.year}-${map.month}-${map.day}T12:00:00`);
+    }
+
+    function getMondayOfCurrentWeek(date) {
+      const copy = new Date(date);
+      const day = copy.getDay();
+      const diff = day === 0 ? -6 : 1 - day;
+      copy.setDate(copy.getDate() + diff);
+      copy.setHours(12, 0, 0, 0);
+      return copy;
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    function formatDateRange(startDate, endDate) {
+      const startMonth = startDate.toLocaleDateString('en-US', { month: 'long' });
+      const startDay = startDate.toLocaleDateString('en-US', { day: 'numeric' });
+      const endMonth = endDate.toLocaleDateString('en-US', { month: 'long' });
+      const endDay = endDate.toLocaleDateString('en-US', { day: 'numeric' });
+      const endYear = endDate.toLocaleDateString('en-US', { year: 'numeric' });
+
+      if (startMonth === endMonth) {
+        return `${startMonth} ${startDay} to ${endDay}, ${endYear}`;
+      }
+      return `${startMonth} ${startDay} to ${endMonth} ${endDay}, ${endYear}`;
+    }
+
+    function getWeekKey(date) {
+      const monday = getMondayOfCurrentWeek(date);
+      const year = monday.getFullYear();
+      const month = String(monday.getMonth() + 1).padStart(2, '0');
+      const day = String(monday.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function saveScheduleState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduleState));
+      localStorage.setItem(STORAGE_WEEK_KEY, activeWeekKey);
+    }
+
+    function loadScheduleState() {
+      const savedWeekKey = localStorage.getItem(STORAGE_WEEK_KEY);
+      const savedState = localStorage.getItem(STORAGE_KEY);
+
+      if (savedWeekKey !== activeWeekKey || !savedState) {
+        scheduleState = cloneScheduleTemplate();
+        saveScheduleState();
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(savedState);
+        if (Array.isArray(parsed) && parsed.length === 7) {
+          scheduleState = parsed;
+        } else {
+          scheduleState = cloneScheduleTemplate();
+          saveScheduleState();
+        }
+      } catch (error) {
+        scheduleState = cloneScheduleTemplate();
+        saveScheduleState();
+      }
+    }
+
+    function initializeDates() {
+      const today = getTodayInManila();
+      const monday = getMondayOfCurrentWeek(today);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      activeWeekKey = getWeekKey(today);
+      loadScheduleState();
+
+      viewingPeriod.textContent = formatDateRange(monday, sunday);
+      todayLabel.textContent = formatDate(today);
+
+      scheduleState.forEach((dayData, index) => {
+        const current = new Date(monday);
+        current.setDate(monday.getDate() + index);
+        dayData.date = current;
+      });
+    }
+
+    function createBadge(status) {
+      const labelMap = {
+        available: 'Available',
+        booked: 'Booked',
+        blocked: 'Blocked'
+      };
+      return `<div class="badge ${status}">${labelMap[status]}</div>`;
+    }
+
+    function renderSchedule() {
+      scheduleGrid.innerHTML = '';
+
+      scheduleState.forEach((dayData, dayIndex) => {
+        const dayCard = document.createElement('div');
+        dayCard.className = 'day-card';
+
+        const availableCount = dayData.slots.filter(slot => slot.status === 'available').length;
+
+        const slotsHtml = dayData.slots.map((slot, slotIndex) => {
+          let slotClass = '';
+          let helperText = '';
+
+          if (slot.status === 'available') {
+            slotClass = 'available-slot';
+            helperText = '<div class="helper-text">Click to reserve this slot</div>';
+          } else if (slot.status === 'booked') {
+            slotClass = 'booked-slot';
+            helperText = '<div class="helper-text">Click to manage this booking</div>';
+          }
+
+          return `
+            <div class="slot ${slotClass}" data-day-index="${dayIndex}" data-slot-index="${slotIndex}">
+              <div class="slot-top">
+                <div class="time">${slot.time}</div>
+                ${createBadge(slot.status)}
+              </div>
+              <div class="reserved-for">${slot.reservedFor}</div>
+              ${helperText}
+            </div>
+          `;
+        }).join('');
+
+        dayCard.innerHTML = `
+          <div class="day-header">
+            <div>
+              <h2 class="day-title">${dayData.day}</h2>
+              <div class="day-date">${formatDate(dayData.date)}</div>
+            </div>
+            <span class="slot-count">${availableCount} available</span>
+          </div>
+          ${slotsHtml}
+        `;
+
+        scheduleGrid.appendChild(dayCard);
+      });
+
+      bindSlotEvents();
+    }
+
+    function bindSlotEvents() {
+      const slotElements = document.querySelectorAll('.slot');
+      slotElements.forEach(slotElement => {
+        slotElement.addEventListener('click', () => {
+          const dayIndex = Number(slotElement.dataset.dayIndex);
+          const slotIndex = Number(slotElement.dataset.slotIndex);
+          const slotData = scheduleState[dayIndex].slots[slotIndex];
+
+          if (slotData.status === 'blocked') return;
+          openSlotModal(dayIndex, slotIndex);
+        });
+      });
+    }
+
+    function openSlotModal(dayIndex, slotIndex) {
+      const dayData = scheduleState[dayIndex];
+      const slotData = dayData.slots[slotIndex];
+
+      selectedSlot = { dayIndex, slotIndex };
+
+      modalSlotDetails.textContent = `${dayData.day}, ${formatDate(dayData.date)} • ${slotData.time}`;
+      slotSummary.innerHTML = `<strong>Status:</strong> ${slotData.status === 'available' ? 'Available' : 'Booked'}<br><strong>Reserved for:</strong> ${slotData.reservedFor}`;
+      bookingNameInput.value = '';
+      adminPinInput.value = '';
+
+      if (slotData.status === 'available') {
+        modalMode = 'book';
+        modalTitle.textContent = 'Reserve Slot';
+        bookingNameGroup.style.display = 'block';
+        adminPinGroup.style.display = 'none';
+        submitBookingBtn.style.display = 'inline-block';
+        confirmCancelBtn.style.display = 'none';
+      } else {
+        modalMode = 'cancel';
+        modalTitle.textContent = 'Manage Booking';
+        bookingNameGroup.style.display = 'none';
+        adminPinGroup.style.display = 'block';
+        submitBookingBtn.style.display = 'none';
+        confirmCancelBtn.style.display = 'inline-block';
+      }
+
+      bookingModal.classList.add('active');
+    }
+
+    function closeModal() {
+      bookingModal.classList.remove('active');
+      selectedSlot = null;
+      modalMode = 'book';
+      bookingForm.reset();
+    }
+
+    bookingForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      if (!selectedSlot || modalMode !== 'book') return;
+
+      const enteredName = bookingNameInput.value.trim();
+      if (!enteredName) {
+        alert('Please enter a name.');
+        return;
+      }
+
+      const { dayIndex, slotIndex } = selectedSlot;
+      scheduleState[dayIndex].slots[slotIndex].status = 'booked';
+      scheduleState[dayIndex].slots[slotIndex].reservedFor = enteredName;
+
+      saveScheduleState();
+      renderSchedule();
+      closeModal();
+    });
+
+    confirmCancelBtn.addEventListener('click', function () {
+      if (!selectedSlot || modalMode !== 'cancel') return;
+
+      const enteredPin = adminPinInput.value.trim();
+      if (enteredPin !== ADMIN_PIN) {
+        alert('Incorrect Admin PIN.');
+        return;
+      }
+
+      const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+      if (!confirmed) return;
+
+      const { dayIndex, slotIndex } = selectedSlot;
+      scheduleState[dayIndex].slots[slotIndex].status = 'available';
+      scheduleState[dayIndex].slots[slotIndex].reservedFor = 'Open for booking';
+
+      saveScheduleState();
+      renderSchedule();
+      closeModal();
+    });
+
+    closeModalBtn.addEventListener('click', closeModal);
+
+    bookingModal.addEventListener('click', function (event) {
+      if (event.target === bookingModal) {
+        closeModal();
+      }
+    });
+
+    initializeDates();
+    renderSchedule();
+  </script>
 </body>
 </html>
