@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BBTC Court Schedule</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f6f9;
+      color: #1f2937;
+    }
+
+    .wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f3d2e, #14532d);
+      color: #fff;
+      padding: 24px 20px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .info-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .info-card .label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-card .value {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.available {
+      background: #22c55e;
+    }
+
+    .dot.booked {
+      background: #f59e0b;
+    }
+
+    .dot.blocked {
+      background: #ef4444;
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .day-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .day-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .day-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #0f172a;
+    }
+
+    .slot-count {
+      font-size: 12px;
+      background: #e5e7eb;
+      color: #374151;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+
+    .slot {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .slot:last-child {
+      margin-bottom: 0;
+    }
+
+    .slot-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .time {
+      font-weight: bold;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .badge.available {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge.booked {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.blocked {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .reserved-for {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.4;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      background: #fff;
+      border-left: 5px solid #14532d;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .footer-note strong {
+      color: #111827;
+    }
+
+    @media (max-width: 768px) {
+      .info-row {
+        grid-template-columns: 1fr;
+      }
+
+      .schedule-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 24px;
+      }
+
+      .slot-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="hero">
+      <h1>Bay Breeze Tennis Club</h1>
+      <p>
+        Public court training schedule for members, guests, and tennis enthusiasts.
+        Please check slot availability first before confirming any training session.
+      </p>
+    </div>
+
+    <div class="info-row">
+      <div class="info-card">
+        <div class="label">Court</div>
+        <div class="value">Main Tennis Court</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Viewing Period</div>
+        <div class="value">Weekly Schedule</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Last Updated</div>
+        <div class="value">March 9, 2026</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot available"></span> Available</div>
+      <div class="legend-item"><span class="dot booked"></span> Booked</div>
+      <div class="legend-item"><span class="dot blocked"></span> Blocked / Not Available</div>
+    </div>
+
+    <div class="schedule-grid">
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Monday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Coach Mark / Training Session</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Guest Training</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Tuesday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Private Training</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Wednesday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">BBTC Members</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Guest Training</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Thursday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Coach Training</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge blocked">Blocked</div>
+          </div>
+          <div class="reserved-for">Court Maintenance</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Friday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Guest Session</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Club Practice</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Saturday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Morning Training</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Guest Group</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header">
+          <h2>Sunday</h2>
+          <span class="slot-count">3 slots</span>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">6:00–8:00 AM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">8:00–10:00 AM</div>
+            <div class="badge booked">Booked</div>
+          </div>
+          <div class="reserved-for">Weekend Training</div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-top">
+            <div class="time">4:00–6:00 PM</div>
+            <div class="badge available">Available</div>
+          </div>
+          <div class="reserved-for">Open for booking</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      <strong>Reminder:</strong> Posted bookings are considered reserved. To request a slot,
+      please contact the court schedule admin first before confirming any training session.
+    </div>
+  </div>
+</body>
+</html>
