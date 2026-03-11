@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
@@ -157,16 +156,9 @@ background:#e5e7eb;
 
 .refresh-btn{
 width:100%;
-margin-bottom:12px;
+margin-bottom:16px;
 background:#14532d;
 color:white;
-}
-
-.last-updated{
-font-size:12px;
-text-align:center;
-margin-bottom:14px;
-color:#6b7280;
 }
 
 @media(max-width:768px){
@@ -224,13 +216,7 @@ grid-template-columns:1fr;
 
 </div>
 
-<button class="refresh-btn" id="refreshBtn">
-Refresh Schedule
-</button>
-
-<div class="last-updated" id="lastUpdated">
-Last updated: --
-</div>
+<button class="refresh-btn" id="refreshBtn">Refresh Schedule</button>
 
 <div id="scheduleGrid" class="schedule-grid"></div>
 
@@ -240,7 +226,7 @@ Last updated: --
 
 <div class="modal">
 
-<h3>Slot Booking</h3>
+<h3 id="modalTitle"></h3>
 <p id="modalInfo"></p>
 
 <input id="nameInput" placeholder="Enter name" style="width:100%;padding:10px;margin-bottom:10px">
@@ -263,7 +249,7 @@ Last updated: --
 
 <script>
 
-const WEB_APP_URL="https://script.google.com/macros/s/AKfycbxS_uCTyX9oREAWK4DQ8sdXxM9icmijnoSrguWkmLzd9VuJuhtuVz3NqCdvYPLbQskyxw/exec"
+const WEB_APP_URL="PASTE_YOUR_GOOGLE_WEB_APP_URL_HERE"
 
 let schedule=[]
 let selectedDay=""
@@ -272,15 +258,6 @@ let mode="book"
 
 const grid=document.getElementById("scheduleGrid")
 
-function updateTimestamp(){
-
-const now=new Date()
-
-document.getElementById("lastUpdated").innerText=
-"Last updated: "+now.toLocaleTimeString()
-
-}
-
 function group(rows){
 
 const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -288,10 +265,13 @@ const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunda
 let map={}
 
 rows.forEach(r=>{
-
 if(!map[r.day]){
 
-map[r.day]={day:r.day,date:r.date,slots:[]}
+map[r.day]={
+day:r.day,
+date:r.date,
+slots:[]
+}
 
 }
 
@@ -315,8 +295,6 @@ schedule=group(data.rows)
 
 render()
 
-updateTimestamp()
-
 }
 
 function render(){
@@ -334,7 +312,6 @@ card.className="day-card"
 let slots=d.slots.map((s,j)=>{
 
 return`
-
 <div class="slot" onclick="openSlot(${i},${j})">
 
 <div style="display:flex;justify-content:space-between">
@@ -348,7 +325,6 @@ return`
 <div>${s.name||"Open for booking"}</div>
 
 </div>
-
 `
 
 }).join("")
@@ -387,8 +363,7 @@ let slot=schedule[d].slots[s]
 
 document.getElementById("modal").style.display="flex"
 
-document.getElementById("modalInfo").innerText=
-selectedDay+" "+selectedTime
+document.getElementById("modalInfo").innerText=selectedDay+" "+selectedTime
 
 if(slot.status==="available"){
 
@@ -456,16 +431,6 @@ document.getElementById("refreshBtn").onclick=()=>{
 fetchSchedule()
 
 }
-
-setInterval(()=>{
-
-if(document.getElementById("modal").style.display==="flex"){
-return
-}
-
-fetchSchedule()
-
-},30000)
 
 fetchSchedule()
 
