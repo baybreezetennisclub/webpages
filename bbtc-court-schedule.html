@@ -214,8 +214,12 @@
 <div class="wrapper">
 
   <div class="hero">
-    <h2 style="margin:0 0 8px 0;">Bay Breeze Tennis Club</h2>
-    <p style="margin:0;">Afternoon Court Schedule (1PM – 6PM)</p>
+    <h2 style="margin:0 0 8px 0;">Bay Breeze Tennis Club - Court Reservation</h2>
+    <p style="margin:0;">
+	Check the latest court availability for training and practice sessions from 1:00 PM to 6:00 PM. Tap Refresh Schedule to see the most recent updates.
+	<br><br>
+	To reserve a time slot, please coordinate with our Club Treasurer, <b>Mr. Bong Sacay</b>.
+	</p>
   </div>
 
   <div class="info-row">
@@ -245,15 +249,13 @@
   </div>
 
   <button class="refresh-btn" id="refreshBtn">Refresh Schedule</button>
-<!--
-  <div class="last-updated" id="lastUpdated">
-    Last updated: --
+<!-- 
+  <div class="last-updated" id="lastUpdated"> Last updated: -- </div>
+-->
+  <div id="scheduleGrid" class="schedule-grid">
+    <div class="loading-box"> Loading schedule...</div>
   </div>
 
-  <div id="scheduleGrid" class="schedule-grid">
-    <div class="loading-box">Loading schedule...</div>
-  </div>
--->
 </div>
 
 <div id="modal" class="modal-overlay">
@@ -282,7 +284,7 @@
 
   const grid = document.getElementById("scheduleGrid");
   const refreshBtn = document.getElementById("refreshBtn");
-
+/*
   function updateTimestamp() {
     const now = new Date();
     document.getElementById("lastUpdated").innerText =
@@ -291,7 +293,7 @@
         minute: "2-digit"
       });
   }
-
+*/
   function updateDates(rows) {
     const today = new Date();
 
@@ -366,7 +368,7 @@
       updateDates(data.rows);
       schedule = group(data.rows);
       render();
-      updateTimestamp();
+      // updateTimestamp();
     } catch (error) {
       grid.innerHTML = `<div class="loading-box">Error loading schedule: ${error.message}</div>`;
     } finally {
@@ -508,5 +510,4 @@
 
 </body>
 </html>
-
 
