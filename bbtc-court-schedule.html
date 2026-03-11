@@ -1,441 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBTC Court Schedule</title>
+  <style>
+    body{
+      font-family:Arial, sans-serif;
+      margin:0;
+      background:#f3f6f9;
+      color:#1f2937;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    .wrapper{
+      max-width:1100px;
+      margin:auto;
+      padding:20px;
+    }
 
-<title>BBTC Court Schedule</title>
+    .hero{
+      background:#14532d;
+      color:white;
+      padding:22px;
+      border-radius:14px;
+      margin-bottom:20px;
+    }
 
-<style>
+    .info-row{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:12px;
+      margin-bottom:16px;
+    }
 
-body{
-font-family:Arial;
-margin:0;
-background:#f3f6f9;
-color:#1f2937;
-}
+    .info-card{
+      background:white;
+      padding:12px;
+      border-radius:10px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.08);
+    }
 
-.wrapper{
-max-width:1100px;
-margin:auto;
-padding:20px;
-}
+    .legend{
+      display:flex;
+      gap:10px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
 
-.hero{
-background:#14532d;
-color:white;
-padding:22px;
-border-radius:14px;
-margin-bottom:20px;
-}
+    .legend-item{
+      background:white;
+      padding:8px 12px;
+      border-radius:20px;
+      font-size:13px;
+    }
 
-.info-row{
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-gap:12px;
-margin-bottom:16px;
-}
+    .dot{
+      width:10px;
+      height:10px;
+      display:inline-block;
+      border-radius:50%;
+      margin-right:6px;
+    }
 
-.info-card{
-background:white;
-padding:12px;
-border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.08);
-}
+    .available{background:#22c55e}
+    .booked{background:#f59e0b}
 
-.legend{
-display:flex;
-gap:10px;
-margin-bottom:16px;
-}
+    .refresh-btn{
+      width:100%;
+      margin-bottom:12px;
+      background:#14532d;
+      color:white;
+      border:none;
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:bold;
+      cursor:pointer;
+    }
 
-.legend-item{
-background:white;
-padding:8px 12px;
-border-radius:20px;
-font-size:13px;
-}
+    .last-updated{
+      font-size:12px;
+      text-align:center;
+      margin-bottom:14px;
+      color:#6b7280;
+    }
 
-.dot{
-width:10px;
-height:10px;
-display:inline-block;
-border-radius:50%;
-margin-right:6px;
-}
+    .schedule-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
 
-.available{background:#22c55e}
-.booked{background:#f59e0b}
+    .day-card{
+      background:white;
+      padding:16px;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.07);
+    }
 
-.schedule-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:16px;
-}
+    .day-header{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    }
 
-.day-card{
-background:white;
-padding:16px;
-border-radius:14px;
-box-shadow:0 3px 10px rgba(0,0,0,0.07);
-}
+    .slot{
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      padding:12px;
+      margin-bottom:10px;
+      cursor:pointer;
+    }
 
-.day-header{
-display:flex;
-justify-content:space-between;
-margin-bottom:12px;
-}
+    .slot:hover{
+      border-color:#22c55e;
+    }
 
-.slot{
-border:1px solid #e5e7eb;
-border-radius:10px;
-padding:12px;
-margin-bottom:10px;
-cursor:pointer;
-}
+    .badge{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:10px;
+      text-transform:capitalize;
+    }
 
-.slot:hover{
-border-color:#22c55e;
-}
+    .badge.available{
+      background:#dcfce7;
+      color:#166534;
+    }
 
-.badge{
-font-size:12px;
-padding:4px 8px;
-border-radius:10px;
-}
+    .badge.booked{
+      background:#fef3c7;
+      color:#92400e;
+    }
 
-.badge.available{
-background:#dcfce7;
-color:#166534;
-}
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.5);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:999;
+    }
 
-.badge.booked{
-background:#fef3c7;
-color:#92400e;
-}
+    .modal{
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      width:90%;
+      max-width:400px;
+    }
 
-.modal-overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.5);
-display:none;
-align-items:center;
-justify-content:center;
-}
+    .modal input{
+      width:100%;
+      padding:10px;
+      margin-bottom:10px;
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      box-sizing:border-box;
+    }
 
-.modal{
-background:white;
-padding:20px;
-border-radius:12px;
-width:90%;
-max-width:400px;
-}
+    .btn-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
 
-button{
-border:none;
-padding:12px 16px;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-}
+    button{
+      border:none;
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:bold;
+      cursor:pointer;
+    }
 
-.btn-primary{
-background:#14532d;
-color:white;
-}
+    .btn-primary{
+      background:#14532d;
+      color:white;
+    }
 
-.btn-warning{
-background:#b45309;
-color:white;
-}
+    .btn-warning{
+      background:#b45309;
+      color:white;
+    }
 
-.btn-secondary{
-background:#e5e7eb;
-}
+    .btn-secondary{
+      background:#e5e7eb;
+      color:#111827;
+    }
 
-.refresh-btn{
-width:100%;
-margin-bottom:16px;
-background:#14532d;
-color:white;
-}
+    .loading-box{
+      background:white;
+      padding:20px;
+      border-radius:14px;
+      text-align:center;
+      box-shadow:0 3px 10px rgba(0,0,0,0.07);
+    }
 
-@media(max-width:768px){
+    @media(max-width:768px){
+      .info-row{
+        grid-template-columns:1fr;
+      }
 
-.info-row{
-grid-template-columns:1fr;
-}
-
-.schedule-grid{
-grid-template-columns:1fr;
-}
-
-}
-
-</style>
-
+      .schedule-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="wrapper">
 
-<div class="hero">
-<h2>Bay Breeze Tennis Club</h2>
-<p>Afternoon Court Schedule (1PM – 6PM)</p>
-</div>
+  <div class="hero">
+    <h2 style="margin:0 0 8px 0;">Bay Breeze Tennis Club</h2>
+    <p style="margin:0;">Afternoon Court Schedule (1PM – 6PM)</p>
+  </div>
 
-<div class="info-row">
+  <div class="info-row">
+    <div class="info-card">
+      <b>Court</b><br>Main Court
+    </div>
 
-<div class="info-card">
-<b>Court</b><br>Main Court
-</div>
+    <div class="info-card">
+      <b>Viewing Period</b><br>
+      <span id="viewingPeriod">Loading...</span>
+    </div>
 
-<div class="info-card">
-<b>Viewing Period</b><br>
-<span id="viewingPeriod">Loading...</span>
-</div>
+    <div class="info-card">
+      <b>Today</b><br>
+      <span id="todayLabel">Loading...</span>
+    </div>
+  </div>
 
-<div class="info-card">
-<b>Today</b><br>
-<span id="todayLabel">Loading...</span>
-</div>
+  <div class="legend">
+    <div class="legend-item">
+      <span class="dot available"></span>Available
+    </div>
+    <div class="legend-item">
+      <span class="dot booked"></span>Booked
+    </div>
+  </div>
 
-</div>
+  <button class="refresh-btn" id="refreshBtn">Refresh Schedule</button>
 
-<div class="legend">
+  <div class="last-updated" id="lastUpdated">
+    Last updated: --
+  </div>
 
-<div class="legend-item">
-<span class="dot available"></span>Available
-</div>
-
-<div class="legend-item">
-<span class="dot booked"></span>Booked
-</div>
-
-</div>
-
-<button class="refresh-btn" id="refreshBtn">Refresh Schedule</button>
-
-<div id="scheduleGrid" class="schedule-grid"></div>
+  <div id="scheduleGrid" class="schedule-grid">
+    <div class="loading-box">Loading schedule...</div>
+  </div>
 
 </div>
 
 <div id="modal" class="modal-overlay">
+  <div class="modal">
+    <h3 style="margin-top:0;">Slot Booking</h3>
+    <p id="modalInfo"></p>
 
-<div class="modal">
+    <input id="nameInput" placeholder="Enter name">
+    <input id="pinInput" placeholder="Enter PIN">
 
-<h3 id="modalTitle"></h3>
-<p id="modalInfo"></p>
-
-<input id="nameInput" placeholder="Enter name" style="width:100%;padding:10px;margin-bottom:10px">
-
-<input id="pinInput" placeholder="Enter PIN" style="width:100%;padding:10px;margin-bottom:10px">
-
-<div style="display:flex;gap:8px">
-
-<button class="btn-secondary" onclick="closeModal()">Close</button>
-
-<button id="bookBtn" class="btn-primary">Book</button>
-
-<button id="cancelBtn" class="btn-warning">Cancel Booking</button>
-
-</div>
-
-</div>
-
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeModal()">Close</button>
+      <button id="bookBtn" class="btn-primary">Book</button>
+      <button id="cancelBtn" class="btn-warning">Cancel Booking</button>
+    </div>
+  </div>
 </div>
 
 <script>
-
-const WEB_APP_URL="https://script.google.com/macros/s/AKfycbxS_uCTyX9oREAWK4DQ8sdXxM9icmijnoSrguWkmLzd9VuJuhtuVz3NqCdvYPLbQskyxw/exec"
-
-let schedule=[]
-let selectedDay=""
-let selectedTime=""
-let mode="book"
-
-const grid=document.getElementById("scheduleGrid")
-
-function group(rows){
-
-const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-
-let map={}
-
-rows.forEach(r=>{
-if(!map[r.day]){
-
-map[r.day]={
-day:r.day,
-date:r.date,
-slots:[]
-}
-
-}
-
-map[r.day].slots.push(r)
-
-})
-
-return days.filter(d=>map[d]).map(d=>map[d])
-
-}
-
-async function fetchSchedule(){
-
-grid.innerHTML="Loading..."
-
-const r=await fetch(WEB_APP_URL+"?action=schedule")
-
-const data=await r.json()
-
-schedule=group(data.rows)
-
-render()
-
-}
-
-function render(){
-
-grid.innerHTML=""
-
-schedule.forEach((d,i)=>{
-
-let available=d.slots.filter(s=>s.status==="available").length
-
-let card=document.createElement("div")
-
-card.className="day-card"
-
-let slots=d.slots.map((s,j)=>{
-
-return`
-<div class="slot" onclick="openSlot(${i},${j})">
-
-<div style="display:flex;justify-content:space-between">
-
-<b>${s.time}</b>
-
-<span class="badge ${s.status}">${s.status}</span>
-
-</div>
-
-<div>${s.name||"Open for booking"}</div>
-
-</div>
-`
-
-}).join("")
-
-card.innerHTML=`
-
-<div class="day-header">
-
-<div>
-
-<b>${d.day}</b><br>
-${new Date(d.date).toLocaleDateString()}
-
-</div>
-
-<div>${available} available</div>
-
-</div>
-
-${slots}
-
-`
-
-grid.appendChild(card)
-
-})
-
-}
-
-function openSlot(d,s){
-
-selectedDay=schedule[d].day
-selectedTime=schedule[d].slots[s].time
-
-let slot=schedule[d].slots[s]
-
-document.getElementById("modal").style.display="flex"
-
-document.getElementById("modalInfo").innerText=selectedDay+" "+selectedTime
-
-if(slot.status==="available"){
-
-mode="book"
-
-document.getElementById("bookBtn").style.display="block"
-document.getElementById("cancelBtn").style.display="none"
-
-}else{
-
-mode="cancel"
-
-document.getElementById("bookBtn").style.display="none"
-document.getElementById("cancelBtn").style.display="block"
-
-}
-
-}
-
-function closeModal(){
-
-document.getElementById("modal").style.display="none"
-
-}
-
-document.getElementById("bookBtn").onclick=async()=>{
-
-const name=document.getElementById("nameInput").value
-const pin=document.getElementById("pinInput").value
-
-let url=`${WEB_APP_URL}?action=book&day=${selectedDay}&time=${selectedTime}&name=${name}&pin=${pin}`
-
-const r=await fetch(url)
-
-const data=await r.json()
-
-alert(data.message||data.status)
-
-closeModal()
-
-fetchSchedule()
-
-}
-
-document.getElementById("cancelBtn").onclick=async()=>{
-
-const pin=document.getElementById("pinInput").value
-
-let url=`${WEB_APP_URL}?action=cancel&day=${selectedDay}&time=${selectedTime}&pin=${pin}`
-
-const r=await fetch(url)
-
-const data=await r.json()
-
-alert(data.message||data.status)
-
-closeModal()
-
-fetchSchedule()
-
-}
-
-document.getElementById("refreshBtn").onclick=()=>{
-
-fetchSchedule()
-
-}
-
-fetchSchedule()
-
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS_uCTyX9oREAWK4DQ8sdXxM9icmijnoSrguWkmLzd9VuJuhtuVz3NqCdvYPLbQskyxw/exec";
+
+  let schedule = [];
+  let selectedDay = "";
+  let selectedTime = "";
+  let mode = "book";
+
+  const grid = document.getElementById("scheduleGrid");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  function updateTimestamp() {
+    const now = new Date();
+    document.getElementById("lastUpdated").innerText =
+      "Last updated: " + now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+  }
+
+  function updateDates(rows) {
+    const today = new Date();
+
+    document.getElementById("todayLabel").innerText =
+      today.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+
+    const dates = [...new Set(rows.map(r => r.date))].sort();
+
+    if (!dates.length) {
+      document.getElementById("viewingPeriod").innerText = "No schedule data";
+      return;
+    }
+
+    const start = new Date(dates[0]);
+    const end = new Date(dates[dates.length - 1]);
+
+    const viewingText =
+      start.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric"
+      }) +
+      " to " +
+      end.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+
+    document.getElementById("viewingPeriod").innerText = viewingText;
+  }
+
+  function group(rows) {
+    const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    const map = {};
+
+    rows.forEach(r => {
+      if (!map[r.day]) {
+        map[r.day] = {
+          day: r.day,
+          date: r.date,
+          slots: []
+        };
+      }
+      map[r.day].slots.push(r);
+    });
+
+    return days.filter(d => map[d]).map(d => map[d]);
+  }
+
+  async function fetchSchedule() {
+    if (!WEB_APP_URL || WEB_APP_URL.includes("PASTE_YOUR")) {
+      grid.innerHTML = `<div class="loading-box">Please paste your Google Web App URL in the source code.</div>`;
+      return;
+    }
+
+    try {
+      refreshBtn.disabled = true;
+      refreshBtn.innerText = "Refreshing...";
+      grid.innerHTML = `<div class="loading-box">Loading schedule...</div>`;
+
+      const response = await fetch(WEB_APP_URL + "?action=schedule");
+      const data = await response.json();
+
+      if (!data || data.status !== "success") {
+        throw new Error(data?.message || "Unable to load schedule");
+      }
+
+      updateDates(data.rows);
+      schedule = group(data.rows);
+      render();
+      updateTimestamp();
+    } catch (error) {
+      grid.innerHTML = `<div class="loading-box">Error loading schedule: ${error.message}</div>`;
+    } finally {
+      refreshBtn.disabled = false;
+      refreshBtn.innerText = "Refresh Schedule";
+    }
+  }
+
+  function render() {
+    grid.innerHTML = "";
+
+    schedule.forEach((d, i) => {
+      const available = d.slots.filter(s => s.status === "available").length;
+
+      const card = document.createElement("div");
+      card.className = "day-card";
+
+      const slots = d.slots.map((s, j) => {
+        return `
+          <div class="slot" onclick="openSlot(${i},${j})">
+            <div style="display:flex;justify-content:space-between;gap:8px;">
+              <b>${s.time}</b>
+              <span class="badge ${s.status}">${s.status}</span>
+            </div>
+            <div style="margin-top:6px;">${s.name || "Open for booking"}</div>
+          </div>
+        `;
+      }).join("");
+
+      card.innerHTML = `
+        <div class="day-header">
+          <div>
+            <b>${d.day}</b><br>
+            ${new Date(d.date).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric"
+            })}
+          </div>
+          <div style="white-space:nowrap;">${available} available</div>
+        </div>
+        ${slots}
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function openSlot(d, s) {
+    selectedDay = schedule[d].day;
+    selectedTime = schedule[d].slots[s].time;
+
+    const slot = schedule[d].slots[s];
+
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modalInfo").innerText = selectedDay + " • " + selectedTime;
+
+    document.getElementById("nameInput").value = "";
+    document.getElementById("pinInput").value = "";
+
+    if (slot.status === "available") {
+      mode = "book";
+      document.getElementById("nameInput").style.display = "block";
+      document.getElementById("bookBtn").style.display = "inline-block";
+      document.getElementById("cancelBtn").style.display = "none";
+    } else {
+      mode = "cancel";
+      document.getElementById("nameInput").style.display = "none";
+      document.getElementById("bookBtn").style.display = "none";
+      document.getElementById("cancelBtn").style.display = "inline-block";
+    }
+  }
+
+  function closeModal() {
+    document.getElementById("modal").style.display = "none";
+    document.getElementById("nameInput").value = "";
+    document.getElementById("pinInput").value = "";
+  }
+
+  document.getElementById("bookBtn").onclick = async () => {
+    const name = document.getElementById("nameInput").value.trim();
+    const pin = document.getElementById("pinInput").value.trim();
+
+    if (!name) {
+      alert("Please enter a name.");
+      return;
+    }
+
+    if (!pin) {
+      alert("Please enter the booking PIN.");
+      return;
+    }
+
+    const url = `${WEB_APP_URL}?action=book&day=${encodeURIComponent(selectedDay)}&time=${encodeURIComponent(selectedTime)}&name=${encodeURIComponent(name)}&pin=${encodeURIComponent(pin)}`;
+
+    try {
+      const r = await fetch(url);
+      const data = await r.json();
+
+      alert(data.message || data.status);
+      closeModal();
+      fetchSchedule();
+    } catch (error) {
+      alert("Error booking slot.");
+    }
+  };
+
+  document.getElementById("cancelBtn").onclick = async () => {
+    const pin = document.getElementById("pinInput").value.trim();
+
+    if (!pin) {
+      alert("Please enter the cancellation PIN.");
+      return;
+    }
+
+    const confirmed = window.confirm("Are you sure you want to cancel this booking?");
+    if (!confirmed) return;
+
+    const url = `${WEB_APP_URL}?action=cancel&day=${encodeURIComponent(selectedDay)}&time=${encodeURIComponent(selectedTime)}&pin=${encodeURIComponent(pin)}`;
+
+    try {
+      const r = await fetch(url);
+      const data = await r.json();
+
+      alert(data.message || data.status);
+      closeModal();
+      fetchSchedule();
+    } catch (error) {
+      alert("Error cancelling booking.");
+    }
+  };
+
+  document.getElementById("refreshBtn").onclick = () => {
+    fetchSchedule();
+  };
+
+  fetchSchedule();
 </script>
 
 </body>
 </html>
-
